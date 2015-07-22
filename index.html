@@ -152,10 +152,10 @@ body{
 背景色 <input type='text' id="paper-bg-color" /></span>
 <br />
 <div id="slider"></div>
-スケール<br />
+スケール:<span id="disp_scale"></span><br />
 <div id="arrow-scale-slider"></div>
 <br />
-回転<br />
+回転:<span id="disp_deg"></span><br />
 <div id="arrow-rotate-slider"></div>
 <br />
 透明度<br />
@@ -226,6 +226,7 @@ var arrow_slider = $( "#arrow-scale-slider" ).slider({
 		}
 		if(arrow_scale==0) arrow_scale = 0.0001;
 		console.log(arrow_scale);
+		$("#disp_scale").text(arrow_scale);
 		for(i=0;i<smile.arrow_num;i++){
 			var matrix = Raphael.matrix();
 			arrowArray[i].matrix.e = arrowArray[i].x;
@@ -240,10 +241,10 @@ var arrow_slider = $( "#arrow-scale-slider" ).slider({
 
 //矢印rotateスライダー
 $( "#arrow-rotate-slider" ).slider({
-	value: 0, min: 0, max: 360, step:30,
+	value: 0, min: 0, max: 360, step:15,
 	slide: function( event, ui ) {
 		arrow_deg = ui.value;
-
+		$("#disp_deg").text(arrow_deg);
 		for(i=0;i<smile.arrow_num;i++){
 			arrowArray[i].rotate(arrow_old_deg - arrow_deg, arrow_cx, arrow_cy);
 			arrowArray[i].matrix.e = arrowArray[i].x;
@@ -341,6 +342,11 @@ $("#arrow-color").spectrum({
 });
 
 $(function(){
+
+$("#disp_deg").text(arrow_deg);
+$("#disp_scale").text(arrow_scale);
+
+
 $("#paper-bg-color").spectrum({
     hideAfterPaletteSelect:false,
     preferredFormat: "hex",
