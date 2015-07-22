@@ -2,6 +2,12 @@
 <html>
 <head>
 <script src="js/raphael-min.js"></script>
+<script src="canvg/js/excanvas.compiled.js"></script>
+<script src="canvg/js/rgbcolor.js"></script>
+<script src="canvg/js/canvg.js"></script>
+<script src="canvg/js/StackBlur.js"></script>
+<script src="canvg/js/base64.js"></script>
+<script src="canvg/js/canvassaver.js"></script>
 <style>
 body{
 	background:#C8E2D1;
@@ -9,6 +15,11 @@ body{
 	font-size:12px;
 	color:#967D58;
 }
+#thecanvas {
+  display: none;
+}
+#input_svg{display:none;width:100%;height:90%;}
+#view_svg{margin-bottom:5px;}
 
 #header{
 	height:100px;
@@ -101,6 +112,8 @@ body{
 <body>
 <div id="header">
 </div><!-- #header-->
+<canvas id="thecanvas" width="600" height="600"></canvas>
+<div id="dialog-svg" title="SVG"><textarea id="input_svg"></textarea></div>
 <div id="content_wrapper">
 <div id="paper_bg">
 <div id="arr_info"><div class="sub_ttl">Arrow info</div>color:#ffffff width:0000 height:0000 opacity:1.0</div>
@@ -147,9 +160,9 @@ body{
 <br />
 透明度<br />
 <br />
-<br />
-SVG<br />
-PNGダウンロード<br />
+<input type="button" id="view_svg" value="SVG出力" /><br />
+<input type="button" value="PNGダウンロード" onclick="renderCustom();" />
+
 </div><!--#controller-->
 </div><!--#content_wrapper-->
 
@@ -247,9 +260,6 @@ $( "#arrow-rotate-slider" ).slider({
 var simpleActionModel = {
    change: function(value_set_num, num, part, scale){
 		for(i=0;i<eval('smile.'+part+'_num');i++) this.hideAll(i,part);
-		gapX = (eval(part+"Array")[value_set_num].matrix.e - eval(part+"Array")[num].matrix.e) / scale;
-		gapY = (eval(part+"Array")[value_set_num].matrix.f - eval(part+"Array")[num].matrix.f) / scale;
-		eval(part+"Array")[num].translate(gapX, gapY);
 		eval(part+"Array")[num].show();
 	},
    show: function(num, part){
@@ -288,36 +298,6 @@ var simpleActionModel = {
 	}
    }
 };
-
-//ドラッグ中処理
-function drag_chuu(obj,dx,dy,scale,deg){
-	x = obj.x + dx;
-	y = obj.y + dy;
-	var matrix = Raphael.matrix();
-	matrix.translate(x, y);
-	matrix.scale(scale);
-
-	obj.transform(matrix.toTransformString());
-}
-//ドラッグスタート処理
-function drag_start(obj){
-	obj.x = obj.matrix.e;
-	obj.y = obj.matrix.f;
-}
-
-//ドラッグ終了処理
-function drag_end(obj){
-	obj.x = obj.matrix.e;
-	obj.y = obj.matrix.f;
-	getCoordinate(obj);
-}
-
-function getCoordinate(obj){
-	if(obj===arrowArray[arrow_set_num]){
-		arrow_dx = obj.x;
-		arrow_dy = obj.y;
-	}
-}
 
 //アクション実装
 for(i=0;i<smile.arrow_num;i++){
@@ -388,7 +368,46 @@ $("#paper-bg-color").spectrum({
    });
 
 //    $( "#arrs" ).selectable();
+
+$('#view_svg').click(function(){
+    $('#input_svg').css({'display':'block'});
+    var svg_code = $("#paper").html();
+    $('#input_svg').text(svg_code);
+    $('#dialog-svg').dialog({
+      width: 600,
+      height: 500,
+      modal: true,
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
 });
+
+$('#input_svg').click(function(){$(this).select();});
+
+});
+
+function render(svg) {
+    var canvas = document.getElementById("thecanvas");
+    canvg(canvas, svg);
+}
+
+function renderCustom() {
+	svgString=remove_newline($('#paper').html());
+	render(svgString);
+	var cnvs = document.getElementById('thecanvas');
+	savePNG(cnvs, 'myimage','canvg/saveme.php');
+}
+
+function remove_newline(text){
+   text = text.replace(/\r\n/g, "");//IE
+   text = text.replace(/\n/g, "");//Firefox
+   text = text.replace(/\t/g, "");
+   return text;
+ } 
+
 
 </script>
 </body>
