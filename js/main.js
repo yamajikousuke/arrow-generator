@@ -1,4 +1,74 @@
 
+
+/*global Raphael:true*/
+(function() {
+    if (Raphael.vml) {
+        Raphael.el.strokeLinearGradient = function() {
+            // not supporting VML yet
+            return this; // maintain chainability
+        };
+    } else {
+        var setAttr = function(el, attr) {
+            var key;
+            if (attr) {
+                for (key in attr) {
+                    if (attr.hasOwnProperty(key)) {
+                        el.setAttribute(key, attr[key]);
+                    }
+                }
+            } else {
+                return document.createElementNS("http://www.w3.org/2000/svg", el);
+            }
+
+            return null;
+        };
+
+        var defLinearGrad = function(defId, stops) {
+            var def = setAttr("linearGradient");
+            var i, l;
+            def.id = defId;
+
+            for (i = 0, l = stops.length; i < l; i += 1) {
+                var stopEle = setAttr("stop");
+                var stop = stops[i];
+                setAttr(stopEle, stop);
+
+                def.appendChild(stopEle);
+            }
+
+            return def;
+        };
+
+        Raphael.el.strokeLinearGradient = function(defId, width, stops) {
+
+            if (stops) {
+                this.paper.defs.appendChild(defLinearGrad(defId, stops));
+            }
+
+            setAttr(this.node, {
+                "fill": "url(#" + defId + ")",
+                "stroke-width": width
+            });
+
+            return this; // maintain chainability
+        };
+
+        Raphael.st.strokeLinearGradient = function(defId, width, stops) {
+            return this.forEach(function(el) {
+                el.strokeLinearGradient(defId, width, stops);
+            });
+        };
+
+        Raphael.fn.defineLinearGradient = function(defId, stops) {
+
+            this.defs.appendChild(defLinearGrad(defId, stops));
+        };
+
+    }
+}());
+
+
+
 var paper = new Raphael( "paper");
 var smile={
 	arrow_num:2,
@@ -23,6 +93,8 @@ var arrow_scale = 1;
 var arrow_old_scale = 1.0;
 var arrow_deg = arrow_old_deg = 0;
 var arrow_cx = arrow_cy = 20;
+var color_start = color_end = smile.arrow_init_color;
+
 
 //arrow
 for(i=0;i< smile.arrow_num;i++){
@@ -87,6 +159,11 @@ var simpleActionModel = {
 		for(i=0;i<eval('smile.'+part+'_num');i++) this.hideAll(i,part);
 		eval(part+"Array")[num].show();
 	},
+   transform: function(value_set_num, num, part, scale){
+            elattrs = [{path: smile.arrow[num].path}];
+	   console.log(elattrs[0]);
+	    arrowArray[arrow_set_num].animate(elattrs[0], 250);
+	},
    show: function(num, part){
 		for(i=0;i<eval('smile.'+part+'_num');i++) this.hideAll(i,part);
 		eval(part+"Array")[num].show();
@@ -110,16 +187,32 @@ var simpleActionModel = {
    arrow_color:function(color){
 	for(i=0;i<smile.arrow_num;i++) arrowArray[i].attr( "fill", color );
    },
-   hoppe_color:function(color){
-	for(i=0;i<smile.hoppe_num;i++){
-		right_hoppeArray[i].attr( "fill", color );
-		left_hoppeArray[i].attr( "fill", color );
+   grad1:function(color_start,color_end,part){
+	$("#grad1").remove();
+	paper.defineLinearGradient("grad1", [{
+	    "id": "s1",
+	    "offset": "0",
+	    "style": "stop-color:"+ color_start +";stop-opacity:1;"},
+	{
+	    "id": "s2",
+	    "offset": "1",
+	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
+	for(i=0;i<eval('smile.'+part+'_num');i++){
+		eval(part+'Array')[i].strokeLinearGradient ("grad1", 0);
 	}
    },
-   mayuge_color:function(color){
-	for(i=0;i<smile.mayuge_num;i++){
-		right_mayugeArray[i].attr( "fill", color );
-		left_mayugeArray[i].attr( "fill", color );
+   grad2:function(color_start,color_end,part){
+	$("#grad1").remove();
+	paper.defineLinearGradient("grad1", [{
+	    "id": "s1",
+	    "offset": "0",
+	    "style": "stop-color:"+ color_start +";stop-opacity:1;"},
+	{
+	    "id": "s2",
+	    "offset": "1",
+	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
+	for(i=0;i<eval('smile.'+part+'_num');i++){
+		eval(part+'Array')[i].strokeLinearGradient ("grad1", 0);
 	}
    }
 };
@@ -132,12 +225,9 @@ for(i=0;i<smile.arrow_num;i++){
 	j = i + 1;
 	$('#arrow'+ j).click({val:i},function(e){
 		arrow_value_set_num = arrow_set_num;
-		arrow_set_num = e.data.val;
-//		console.log(arrow_value_set_num);
-		simpleActionModel.change(arrow_value_set_num, e.data.val, "arrow", arrow_scale);
+		simpleActionModel.transform(arrow_value_set_num, e.data.val, "arrow", arrow_scale);
 		$(".arr").css({'border' : '1px solid #ccc'});
 		$(this).css({'border' : '1px solid #967D58'});
-
 	});
 }
 
@@ -162,6 +252,53 @@ $("#arrow-color").spectrum({
     },
     change: function(c) {
 	simpleActionModel.color(c.toHexString(),"arrow");
+    }
+});
+
+
+$("#arrow-grade1").spectrum({
+    hideAfterPaletteSelect:false,
+    preferredFormat: "hex",
+    showInput: true,
+    showButtons: false,
+    color: smile.arrow_init_color,//‰Šú’l
+    showPalette: true,
+    palette: [
+        ['rgb(230, 0, 18);', 'rgb(235, 97, 0);','rgb(243, 152, 0);','rgb(252, 200, 0);','rgb(255, 251, 0);','rgb(207, 219,0);', 'rgb(143, 195, 31);'],
+        ['rgb(34, 172, 56);','rgb(0, 153, 68);','rgb(0, 155, 107);','rgb(0, 158,150);', 'rgb(0, 160, 193);','rgb(0, 160, 233);','rgb(0, 134, 209);'],
+        ['rgb(0, 104, 183);','rgb(0, 71,157);', 'rgb(29, 32, 136);','rgb(96, 25, 134);','rgb(146, 7, 131);','rgb(190, 0, 129);','rgb(228, 0,127);'],
+        ['rgb(229, 0, 106);','rgb(229, 0, 79);','rgb(230, 0, 51);','rgb(0, 0, 0);']
+    ],
+    move: function(c) {
+	color_end = c.toHexString();
+	simpleActionModel.grad1(color_start, color_end, "arrow");
+    },
+    change: function(c) {
+	color_end = c.toHexString();
+	simpleActionModel.grad1(color_start, color_end, "arrow");
+    }
+});
+
+$("#arrow-grade2").spectrum({
+    hideAfterPaletteSelect:false,
+    preferredFormat: "hex",
+    showInput: true,
+    showButtons: false,
+    color: smile.arrow_init_color,//‰Šú’l
+    showPalette: true,
+    palette: [
+        ['rgb(230, 0, 18);', 'rgb(235, 97, 0);','rgb(243, 152, 0);','rgb(252, 200, 0);','rgb(255, 251, 0);','rgb(207, 219,0);', 'rgb(143, 195, 31);'],
+        ['rgb(34, 172, 56);','rgb(0, 153, 68);','rgb(0, 155, 107);','rgb(0, 158,150);', 'rgb(0, 160, 193);','rgb(0, 160, 233);','rgb(0, 134, 209);'],
+        ['rgb(0, 104, 183);','rgb(0, 71,157);', 'rgb(29, 32, 136);','rgb(96, 25, 134);','rgb(146, 7, 131);','rgb(190, 0, 129);','rgb(228, 0,127);'],
+        ['rgb(229, 0, 106);','rgb(229, 0, 79);','rgb(230, 0, 51);','rgb(0, 0, 0);']
+    ],
+    move: function(c) {
+	color_start = c.toHexString();
+	simpleActionModel.grad2(color_start, color_end, "arrow");
+    },
+    change: function(c) {
+	color_start = c.toHexString();
+	simpleActionModel.grad2(color_start, color_end, "arrow");
     }
 });
 
