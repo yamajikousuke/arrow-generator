@@ -1,5 +1,3 @@
-
-
 /*global Raphael:true*/
 (function() {
     if (Raphael.vml) {
@@ -132,7 +130,6 @@ $( "#arrow-rotate-slider" ).slider({
 			arrowArray[i].matrix.e = arrowArray[i].x;
 			arrowArray[i].matrix.f = arrowArray[i].y;
 		}
-
 		arrow_old_deg = arrow_deg;
 	}
 });
@@ -142,39 +139,29 @@ $( "#arrow-rotate-slider" ).slider({
 //アクション定義
 var simpleActionModel = {
    change: function(value_set_num, num, part, scale){
-		for(i=0;i<eval('smile.'+part+'_num');i++) this.hideAll(i,part);
-		eval(part+"Array")[num].show();
+		for(i=0;i<smile.arrow_num;i++) this.hideAll(i,part);
+		arrowArray[num].show();
 	},
-   transform: function(value_set_num, num, part, scale){
+   transform: function(value_set_num, num){
             elattrs = [{path: smile.arrow[num].path}];
-	   console.log(elattrs[0]);
+//	   console.log(elattrs[0]);
 	    arrowArray[arrow_set_num].animate(elattrs[0], 250);
 	},
-   show: function(num, part){
-		for(i=0;i<eval('smile.'+part+'_num');i++) this.hideAll(i,part);
-		eval(part+"Array")[num].show();
+   show: function(num){
+		for(i=0;i<smile.arrow_num;i++) this.hideAll(i);
+		arrowArray[num].show();
 	},
    hide: function(obj){
 		obj.hide();
 	},
-   hideAll: function(i,part){
-		eval(part+"Array")[i].hide();
+   hideAll: function(i){
+		arrowArray[i].hide();
 	},
-   drag:function(i,obj){
-	obj.drag(function(dx,dy,arrow_deg){
-		drag_chuu(obj,dx,dy,obj.matrix.d,arrow_deg);
-	},
-	function(){drag_start(obj)},
-	function(){drag_end(obj);});
-	},
-   color:function(color,part){
+  color:function(color){
 	color_start = color_end = color;
-	for(i=0;i<eval('smile.'+part+'_num');i++) eval(part+'Array')[i].attr( "fill", color );
-   },
-   arrow_color:function(color){
 	for(i=0;i<smile.arrow_num;i++) arrowArray[i].attr( "fill", color );
    },
-   grad1:function(color_start,color_end,part){
+   grad1:function(color_start,color_end){
 	$("#grad1").remove();
 	paper.defineLinearGradient("grad1", [{
 	    "id": "s1",
@@ -184,11 +171,11 @@ var simpleActionModel = {
 	    "id": "s2",
 	    "offset": "1",
 	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
-	for(i=0;i<eval('smile.'+part+'_num');i++){
-		eval(part+'Array')[i].strokeLinearGradient ("grad1", 0);
+	for(i=0;i<smile.arrow_num;i++){
+		arrowArray[i].strokeLinearGradient ("grad1", 0);
 	}
    },
-   grad2:function(color_start,color_end,part){
+   grad2:function(color_start,color_end){
 	$("#grad1").remove();
 	paper.defineLinearGradient("grad1", [{
 	    "id": "s1",
@@ -198,8 +185,8 @@ var simpleActionModel = {
 	    "id": "s2",
 	    "offset": "1",
 	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
-	for(i=0;i<eval('smile.'+part+'_num');i++){
-		eval(part+'Array')[i].strokeLinearGradient ("grad1", 0);
+	for(i=0;i<smile.arrow_num;i++){
+		arrowArray[i].strokeLinearGradient ("grad1", 0);
 	}
    }
 };
@@ -207,12 +194,12 @@ var simpleActionModel = {
 //アクション実装
 for(i=0;i<smile.arrow_num;i++){
 	//全部を非表示
-	simpleActionModel.hideAll(i,"arrow");
+	simpleActionModel.hideAll(i);
 	//クリック処理実装
 	j = i + 1;
 	$('#arrow'+ j).click({val:i},function(e){
 		arrow_value_set_num = arrow_set_num;
-		simpleActionModel.transform(arrow_value_set_num, e.data.val, "arrow", arrow_scale);
+		simpleActionModel.transform(arrow_value_set_num, e.data.val);
 		$(".arr").css({'border' : '1px solid #ccc'});
 		$(this).css({'border' : '1px solid rgb(84, 84, 84)'});
 	});
@@ -235,10 +222,10 @@ $("#arrow-color").spectrum({
         ['rgb(229, 0, 106);','rgb(229, 0, 79);','rgb(230, 0, 51);','rgb(0, 0, 0);']
     ],
     move: function(c) {
-	simpleActionModel.color(c.toHexString(),"arrow");
+	simpleActionModel.color(c.toHexString());
     },
     change: function(c) {
-	simpleActionModel.color(c.toHexString(),"arrow");
+	simpleActionModel.color(c.toHexString());
     }
 });
 
@@ -258,11 +245,11 @@ $("#arrow-grade1").spectrum({
     ],
     move: function(c) {
 	color_end = c.toHexString();
-	simpleActionModel.grad1(color_start, color_end, "arrow");
+	simpleActionModel.grad1(color_start, color_end);
     },
     change: function(c) {
 	color_end = c.toHexString();
-	simpleActionModel.grad1(color_start, color_end, "arrow");
+	simpleActionModel.grad1(color_start, color_end);
     }
 });
 
@@ -281,11 +268,11 @@ $("#arrow-grade2").spectrum({
     ],
     move: function(c) {
 	color_start = c.toHexString();
-	simpleActionModel.grad2(color_start, color_end, "arrow");
+	simpleActionModel.grad2(color_start, color_end);
     },
     change: function(c) {
 	color_start = c.toHexString();
-	simpleActionModel.grad2(color_start, color_end, "arrow");
+	simpleActionModel.grad2(color_start, color_end);
     }
 });
 
