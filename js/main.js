@@ -70,20 +70,6 @@
 
 
 var paper = new Raphael( "paper");
-var smile={
-	arrow_num:2,
-	arrow_init_color:"#5e5e5e",
-	arrow:[
-		{base_coodinate:{x:200, y:200},
-		  path:"M50,0 40,0 56.667,25 0,25 0,35 56.667,35 40,60 50,60 70,30 "
-		},
-		{base_coodinate:{x:200, y:200},
-		  path:"M0,15 0,25 50,25 45,40 70,20 45,0 50,15"
-		}
-	]
-}
-
-
 
 var arrowArray = [];
 var arrow_cx_Array = arrow_cy_Array = [];
@@ -182,6 +168,7 @@ var simpleActionModel = {
 	function(){drag_end(obj);});
 	},
    color:function(color,part){
+	color_start = color_end = color;
 	for(i=0;i<eval('smile.'+part+'_num');i++) eval(part+'Array')[i].attr( "fill", color );
    },
    arrow_color:function(color){
@@ -227,7 +214,7 @@ for(i=0;i<smile.arrow_num;i++){
 		arrow_value_set_num = arrow_set_num;
 		simpleActionModel.transform(arrow_value_set_num, e.data.val, "arrow", arrow_scale);
 		$(".arr").css({'border' : '1px solid #ccc'});
-		$(this).css({'border' : '1px solid #967D58'});
+		$(this).css({'border' : '1px solid rgb(84, 84, 84)'});
 	});
 }
 
