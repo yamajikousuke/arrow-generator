@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>矢印生成機 -arrow generator-</title>
+<title>Arrow Generator</title>
 <script src="js/raphael-min.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -26,32 +26,35 @@
 <ul id="arrs">
 <li id="arrow1" class="arr"><img src="img/arrow/arrow1.gif"></li>
 <li id="arrow2" class="arr"><img src="img/arrow/arrow2.gif"></li>
-<li id="arrow3" class="arr">矢印２</li>
-<li id="arrow4" class="arr">矢印２</li>
-<li id="arrow5" class="arr">矢印２</li>
-<li id="arrow6" class="arr">矢印２</li>
-<li id="arrow7" class="arr">矢印２</li>
-<li id="arrow8" class="arr">矢印２</li>
-<li id="arrow9" class="arr">矢印２</li>
-<li id="arrow10" class="arr">矢印２</li>
-<li id="arrow11" class="arr">矢印２</li>
-<li id="arrow12" class="arr">矢印２</li>
-<li id="arrow13" class="arr">矢印２</li>
-<li id="arrow14" class="arr">矢印２</li>
-<li id="arrow15" class="arr">矢印２</li>
-<li id="arrow16" class="arr">矢印２</li>
-<li id="arrow17" class="arr">矢印２</li>
-<li id="arrow18" class="arr">矢印２</li>
-<li id="arrow19" class="arr">矢印２</li>
-<li id="arrow20" class="arr">矢印２</li>
-<li id="arrow21" class="arr">矢印２</li>
-<li id="arrow22" class="arr">矢印２</li>
-<li id="arrow23" class="arr">矢印２</li>
-<li id="arrow24" class="arr">矢印２</li>
-<li id="arrow25" class="arr">矢印２</li>
-<li id="arrow26" class="arr">矢印２</li>
-<li id="arrow27" class="arr">矢印２</li>
-<li id="arrow28" class="arr">矢印２</li>
+<li id="arrow3" class="arr"><img src="img/arrow/arrow0_3.jpg"></li>
+<li id="arrow4" class="arr"><img src="img/arrow/arrow3.gif"></li>
+<li id="arrow5" class="arr"><img src="img/arrow/arrow4.gif"></li>
+<li id="arrow6" class="arr"><img src="img/arrow/arrow5.jpg"></li>
+<li id="arrow7" class="arr"><img src="img/arrow/arrow0_7.gif"></li>
+
+<li id="arrow8" class="arr"><img src="img/arrow/arrow6.gif"></li>
+<li id="arrow9" class="arr"><img src="img/arrow/arrow7.gif"></li>
+<li id="arrow10" class="arr"><img src="img/arrow/arrow8.jpg"></li>
+<li id="arrow11" class="arr"><img src="img/arrow/arrow9.jpg"></li>
+<li id="arrow12" class="arr"><img src="img/arrow/arrow10.jpg"></li>
+<li id="arrow13" class="arr"><img src="img/arrow/arrow11.jpg"></li>
+<li id="arrow14" class="arr"><img src="img/arrow/arrow12.jpg"></li>
+<li id="arrow15" class="arr"><img src="img/arrow/arrow13.jpg"></li>
+<li id="arrow16" class="arr"><img src="img/arrow/arrow14.jpg"></li>
+<li id="arrow17" class="arr"><img src="img/arrow/arrow15.jpg"></li>
+<li id="arrow18" class="arr"><img src="img/arrow/arrow16.jpg"></li>
+<li id="arrow19" class="arr"><img src="img/arrow/arrow17.jpg"></li>
+<li id="arrow20" class="arr"><img src="img/arrow/arrow18.jpg"></li>
+<li id="arrow21" class="arr"><img src="img/arrow/arrow8.gif"></li>
+<li id="arrow22" class="arr"><img src="img/arrow/arrow9.gif"></li>
+<li id="arrow23" class="arr"><img src="img/arrow/arrow19.jpg"></li>
+<li id="arrow24" class="arr"><img src="img/arrow/arrow20.jpg"></li>
+<li id="arrow25" class="arr"><img src="img/arrow/arrow21.jpg"></li>
+<li id="arrow26" class="arr"><img src="img/arrow/arrow22.jpg"></li>
+<li id="arrow27" class="arr"></li>
+<li id="arrow28" class="arr"></li>
+<li id="arrow29" class="arr"></li>
+<li id="arrow30" class="arr"></li>
 
 </ul><!-- #arrs-->
 </div><!-- #arrow_type-->
@@ -70,23 +73,25 @@
 回転:<span id="disp_deg"></span><br />
 <div id="arrow-rotate-slider"></div>
 <br />
-<!--
-<input type="button" id="view_svg" value="SVG出力" /><br />
--->
-<input type="button" value="PNGダウンロード" onclick="renderCustom();" />
+<input type="button" id="btn_png_dl" value="PNGダウンロード" onclick="renderCustom();" />
+<input type="button" id="view_svg" value="SVG出力" />
 </div><!--#controller-->
 <div style="clear:both"></div>
-<h2 class="ttl">ソースコード</h2>
-<a href="https://github.com/yamajikousuke/arrow-generator" target="_blank">https://github.com/yamajikousuke/arrow-generator</a>
-<br />
 <h2 class="ttl">使い方</h2>
-テキストテキストテキスト<br />
+<div class="txt-area">
+Arrow-generatorは、矢印のアイコン(PNG画像)を作成するツールです。<br />
 <br /><br />
-<h2 class="ttl">ライブラリ</h2>
-テキストテキストテキスト<br />
+</div>
+
+<h2 class="ttl">ソースコード</h2>
+<div class="txt-area">
+ソースコードは下記よりダウンロードできます。<br />
+<a href="https://github.com/yamajikousuke/arrow-generator" target="_blank">https://github.com/yamajikousuke/arrow-generator</a>
 <br /><br />
-<hr>
+</div>
+<br /><br />
 copyright (C)2015 simle-arrow.net All rights reserved.
+<br /><br />
 </div><!--#content_wrapper-->
 <script src="canvg/js/excanvas.compiled.js"></script>
 <script src="canvg/js/rgbcolor.js"></script>

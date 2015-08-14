@@ -70,26 +70,26 @@
 var paper = new Raphael( "paper");
 
 var arrowArray = [];
-var arrow_cx_Array = arrow_cy_Array = [];
+var arrow_cx_Array = [];
+var arrow_cy_Array = [];
 var arrow_set_num=0;
-var arrow_dx = arrow_dy = 0;
+var arrow_value_set_num=0;
 var arrow_scale = 1;
-var arrow_old_scale = 1.0;
-var arrow_deg = arrow_old_deg = 0;
-var arrow_cx = arrow_cy = 20;
+var arrow_deg = 0;
+var arrow_old_deg = 0;
+var arrow_cx;
+var arrow_cy;
 var color_start = color_end = smile.arrow_init_color;
 
 
 //arrow
-for(i=0;i< smile.arrow_num;i++){
-	var arrow = paper.path(smile.arrow[i].path).attr({fill:smile.arrow_init_color,stroke:"none"});
-	arrow.x = smile.arrow[i].base_coodinate.x;
-	arrow.y = smile.arrow[i].base_coodinate.y;
-	arrowArray.push(arrow);
-	arrowArray[i].translate(arrow.x, arrow.y);
-}
-
-
+var arrow = paper.path(smile.arrow[arrow_set_num].path).attr({fill:smile.arrow_init_color,stroke:"none"});
+arrow.x = smile.arrow[arrow_set_num].base_coodinate.x;
+arrow.y = smile.arrow[arrow_set_num].base_coodinate.y;
+arrowArray.push(arrow);
+arrow_cx_Array[arrow_set_num] = arrow.getBBox().width/ 2;
+arrow_cy_Array[arrow_set_num] = arrow.getBBox().height/ 2;
+arrowArray[arrow_set_num].translate(arrow.x, arrow.y);
 
 //arrowスケールスライダー
 var arrow_slider = $( "#arrow-scale-slider" ).slider({
@@ -99,23 +99,15 @@ var arrow_slider = $( "#arrow-scale-slider" ).slider({
 	},
 	slide: function( event, ui ) {
 		arrow_scale = ui.value / 50;
-		if(arrow_old_scale == arrow_scale){
-			arrow_scale = arrow_old_scale;
-		}else{
-			arrow_old_scale = arrow_scale;
-		}
-		if(arrow_scale==0) arrow_scale = 0.0001;
-		console.log(arrow_scale);
 		$("#disp_scale").text(arrow_scale);
-		for(i=0;i<smile.arrow_num;i++){
-			var matrix = Raphael.matrix();
-			arrowArray[i].matrix.e = arrowArray[i].x;
-			arrowArray[i].matrix.f = arrowArray[i].y;
-			matrix.translate(arrowArray[i].matrix.e, arrowArray[i].matrix.f);
-			matrix.scale(1 * arrow_scale);
-			matrix.rotate(-arrow_deg, arrow_cx, arrow_cy);
-			arrowArray[i].transform(matrix.toTransformString());
-		}
+
+		var matrix = Raphael.matrix();
+		arrowArray[arrow_set_num].matrix.e = arrowArray[arrow_set_num].x;
+		arrowArray[arrow_set_num].matrix.f = arrowArray[arrow_set_num].y;
+		matrix.translate(arrowArray[arrow_set_num].matrix.e, arrowArray[arrow_set_num].matrix.f);
+		matrix.scale(arrow_scale, arrow_scale, arrow_cx_Array[arrow_set_num] ,arrow_cy_Array[arrow_set_num]);
+		matrix.rotate(-arrow_deg, arrow_cx_Array[arrow_set_num], arrow_cy_Array[arrow_set_num]);
+		arrowArray[0].transform(matrix.toTransformString());
 	}
 });
 
@@ -125,11 +117,9 @@ $( "#arrow-rotate-slider" ).slider({
 	slide: function( event, ui ) {
 		arrow_deg = ui.value;
 		$("#disp_deg").text(arrow_deg);
-		for(i=0;i<smile.arrow_num;i++){
-			arrowArray[i].rotate(arrow_old_deg - arrow_deg, arrow_cx, arrow_cy);
-			arrowArray[i].matrix.e = arrowArray[i].x;
-			arrowArray[i].matrix.f = arrowArray[i].y;
-		}
+		arrowArray[arrow_set_num].rotate(arrow_old_deg - arrow_deg, arrow_cx_Array[arrow_set_num], arrow_cy_Array[arrow_set_num]);
+		arrowArray[arrow_set_num].matrix.e = arrowArray[arrow_set_num].x;
+		arrowArray[arrow_set_num].matrix.f = arrowArray[arrow_set_num].y;
 		arrow_old_deg = arrow_deg;
 	}
 });
@@ -138,14 +128,9 @@ $( "#arrow-rotate-slider" ).slider({
 
 //アクション定義
 var simpleActionModel = {
-   change: function(value_set_num, num, part, scale){
-		for(i=0;i<smile.arrow_num;i++) this.hideAll(i,part);
-		arrowArray[num].show();
-	},
-   transform: function(value_set_num, num){
+   transform: function(num){
             elattrs = [{path: smile.arrow[num].path}];
-//	   console.log(elattrs[0]);
-	    arrowArray[arrow_set_num].animate(elattrs[0], 250);
+	    arrowArray[0].animate(elattrs[0], 250);
 	},
    show: function(num){
 		for(i=0;i<smile.arrow_num;i++) this.hideAll(i);
@@ -171,9 +156,7 @@ var simpleActionModel = {
 	    "id": "s2",
 	    "offset": "1",
 	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
-	for(i=0;i<smile.arrow_num;i++){
-		arrowArray[i].strokeLinearGradient ("grad1", 0);
-	}
+	arrowArray[arrow_set_num].strokeLinearGradient ("grad1", 0);
    },
    grad2:function(color_start,color_end){
 	$("#grad1").remove();
@@ -185,27 +168,25 @@ var simpleActionModel = {
 	    "id": "s2",
 	    "offset": "1",
 	    "style": "stop-color:"+ color_end +";stop-opacity:1;"}]);
-	for(i=0;i<smile.arrow_num;i++){
-		arrowArray[i].strokeLinearGradient ("grad1", 0);
-	}
+	arrowArray[arrow_set_num].strokeLinearGradient ("grad1", 0);
    }
 };
 
 //アクション実装
 for(i=0;i<smile.arrow_num;i++){
 	//全部を非表示
-	simpleActionModel.hideAll(i);
+//	simpleActionModel.hideAll(i);
 	//クリック処理実装
 	j = i + 1;
 	$('#arrow'+ j).click({val:i},function(e){
-		arrow_value_set_num = arrow_set_num;
-		simpleActionModel.transform(arrow_value_set_num, e.data.val);
+		arrow_value_set_num = e.data.val;
+		simpleActionModel.transform(e.data.val);
 		$(".arr").css({'border' : '1px solid #ccc'});
 		$(this).css({'border' : '1px solid rgb(84, 84, 84)'});
 	});
 }
 
-arrowArray[arrow_set_num].show();
+//arrowArray[arrow_set_num].show();
 
 //色パレット設定
 $("#arrow-color").spectrum({
