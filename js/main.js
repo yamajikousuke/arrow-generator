@@ -65,22 +65,16 @@
     }
 }());
 
-
-
-var paper = new Raphael( "paper");
-
+var paper = new Raphael("paper");
 var arrowArray = [];
 var arrow_cx_Array = [];
 var arrow_cy_Array = [];
-var arrow_set_num=0;
-var arrow_value_set_num=0;
+var arrow_set_num = 0; //デフォルトの矢印
+var arrow_value_set_num = 0;
 var arrow_scale = 1;
 var arrow_deg = 0;
 var arrow_old_deg = 0;
-var arrow_cx;
-var arrow_cy;
 var color_start = color_end = smile.arrow_init_color;
-
 
 //arrow
 var arrow = paper.path(smile.arrow[arrow_set_num].path).attr({fill:smile.arrow_init_color,stroke:"none"});
@@ -93,7 +87,7 @@ arrowArray[arrow_set_num].translate(arrow.x, arrow.y);
 
 //arrowスケールスライダー
 var arrow_slider = $( "#arrow-scale-slider" ).slider({
-	value: 50, min: 10, max: 150,
+	value: 50, min: 10, max: 150, step:5,
 	start: function( event, ui ) {
 
 	},
@@ -174,8 +168,6 @@ var simpleActionModel = {
 
 //アクション実装
 for(i=0;i<smile.arrow_num;i++){
-	//全部を非表示
-//	simpleActionModel.hideAll(i);
 	//クリック処理実装
 	j = i + 1;
 	$('#arrow'+ j).click({val:i},function(e){
