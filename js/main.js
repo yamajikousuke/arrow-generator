@@ -93,7 +93,7 @@ arrowArray[arrow_set_num].translate(arrow.x, arrow.y);
 
 //arrowスケールスライダー
 var arrow_slider = $( "#arrow-scale-slider" ).slider({
-	value: 50, min: 10, max: 150, step:10,
+	value: 50, min: 10, max: 150,
 	start: function( event, ui ) {
 
 	},
@@ -320,7 +320,15 @@ function renderCustom() {
 	svgString=remove_newline($('#paper').html());
 	render(svgString);
 	var cnvs = document.getElementById('thecanvas');
-	savePNG(cnvs, 'myimage','canvg/saveme.php');
+	var date = new Date();
+	var y = date.getFullYear();
+	var m = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var mi = date.getMinutes();
+	var s = date.getSeconds();
+	var fileName = "arrow_" + y + m + d + h + mi + s;
+	savePNG(cnvs, fileName,'canvg/saveme.php');
 }
 
 function remove_newline(text){
